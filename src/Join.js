@@ -1,26 +1,18 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
+import { inject, observer } from 'mobx-react';
 import { browserHistory  } from 'react-router'
-import * as loggedInActions from './actions/loggedIn.actions.js';
-import * as userActions from './actions/user.actions.js';
 import 'whatwg-fetch';
 
 // css from https://github.com/susielu/minimal-ui
 
-class App extends React.Component {
-
-	constructor(props) {
-    super(props);
-    this.doSignUp = this.doSignUp.bind(this)
-  }
+var App = inject("store")(observer(React.createClass({
 
 		doSignUp(){
 			//Content-Type: application/json" -X POST -d '{"type":"Statistician","email":"r@rwhichard White","password":"hello"}' http://localhost:8080/create/users
 			
 			     console.log("inside post api");
-					 console.log(this.props.baseURL);
-     fetch(this.props.baseURL+'create/users', {
+					 console.log(this.props.store.baseURL);
+     fetch(this.props.store.baseURL+'create/users', {
      method: 'POST',
      headers: {
                   'Accept': 'application/json',
@@ -38,14 +30,14 @@ class App extends React.Component {
         .then((responseData) => {
                                  console.log("inside responsejson");
                                  console.log('response object:',responseData)
-																 this.props.setUser(responseData)
-																 console.log(this.props.user)
-																 this.props.setLoggedIn(true)
+																 this.props.store.user = responseData
+																 console.log(this.props.store.user)
+																 this.props.store.user.loggedin = true
 																	browserHistory.replace("/")
          });
 			
 		
-		}
+		},
 	
     render() {
         
@@ -64,22 +56,6 @@ class App extends React.Component {
                 </div>
                 );
     }
-}
+})))
 
-function mapStateToProps(state, ownProps) {
-	return {
-	isLoggedIn: state.loggedIn,
-	currentURL: ownProps.location.pathname,
-	baseURL: state.baseURL,
-	user: state.user,
-	}
-}
-
-function mapDispatchToProps (dispatch){
-	return bindActionCreators({
-														setLoggedIn: loggedInActions.setLoggedIn,
-														setUser: userActions.setUser
-														}, dispatch)
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(App)
+export default App

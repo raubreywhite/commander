@@ -1,48 +1,29 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux'
+import { inject, observer } from 'mobx-react';
 import { browserHistory  } from 'react-router'
-import * as redirectUrlActions from './actions/redirectUrl.actions.js';
 
-class EnsureLoggedInContainer extends React.Component {
+var App = inject("store")(observer(React.createClass({
 	componentDidMount() {
 		
-		console.log(this.props.isLoggedIn)
-		if (!this.props.isLoggedIn) {
+		console.log(this.props.store.user.loggedin)
+		if (!this.props.store.user.loggedin) {
 			// set the current url/path for future redirection (we use a Redux action)
 			// then redirect (we use a React Router method)
-			this.props.setRedirectUrl(this.props.currentURL)
-			browserHistory.replace("/login")
+			//this.props.setRedirectUrl(this.props.currentURL)
+			browserHistory.replace("/")
 		}
-	}
+	},
 	
 	render() {
 		
 		//console.log(this.props.isLoggedIn)
 		
-		if (this.props.isLoggedIn) {
+		if (this.props.store.user.loggedin) {
 			return this.props.children
 		} else {
 			return null
 		}
 	}
-}
+})))
 
-// Grab a reference to the current URL. If this is a web app and you are
-// using React Router, you can use `ownProps` to find the URL. Other
-// platforms (Native) or routing libraries have similar ways to find
-// the current position in the app.
-function mapStateToProps(state, ownProps) {
-	return {
-	isLoggedIn: state.loggedIn,
-	currentURL: ownProps.location.pathname
-	}
-}
-
-function mapDispatchToProps (dispatch){
-	return bindActionCreators({
-														setRedirectUrl: redirectUrlActions.setRedirectUrl
-	}, dispatch)
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(EnsureLoggedInContainer)
+export default App

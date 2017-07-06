@@ -7,35 +7,20 @@ import Login from './Login.js';
 import Join from './Join.js';
 import Logout from './Logout.js';
 import EnsureLoggedInContainer from './EnsureLoggedInContainer.js';
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import './index.css';
-import statsconsultantApp from './reducers';
-import { LocaleProvider } from 'antd';
-import enUS from 'antd/lib/locale-provider/en_US';
+import { Provider } from 'mobx-react';
+//import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
+//import './index.css';
 
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 
-let store = createStore(statsconsultantApp)
+//const routingStore = new RouterStore();
 
-store.dispatch({
-							 type: 'SET_LOGIN_STATE',
-							 value: false
-							 });
+import {store} from './store'
 
-store.dispatch({
-							 type: 'SET_REDIRECT_URL',
-							 value: "/"
-							 });
-
-store.dispatch({
-							 type: 'SET_BASE_URL',
-							 value: "http://localhost:8888/"
-							 });
+const stores = {store}
 
 ReactDOM.render((
-<LocaleProvider locale={enUS}>
- <Provider store={store}>
+ <Provider {...stores}>
     <Router history={browserHistory}>
         <Route path="/" component={App}>
             <IndexRoute component={Home}/>
@@ -48,5 +33,4 @@ ReactDOM.render((
         </Route>
     </Router>
  </Provider>
-</LocaleProvider>
 ), document.getElementById('root'));
